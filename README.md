@@ -79,12 +79,12 @@ service docker restart
 configure.sh 					
 recode.s 						
 redis-benchmark 						
-test_hello/ 					
+helloworld/ 					
 	- Dockerfile 				
 	- popcorn-hello 			
 	- popcorn-hello_aarch64		
 	- popcorn-hello_x86-64	
-test_redis/
+popcorn-redis/
 	- Dockerfile
 	- redis-server
 	- redis-server_aarch64
@@ -102,11 +102,11 @@ We provide examples step by step to explain different senarios, from x86 to ARM 
 
 In docker, the program workdir is set to /app
 ```bash
-cp -r test_hello /app #may need sudo
+cp -r helloworld /app #may need sudo
 ```
 Build a docker image. Use myhello as the image name. **(DO NOT FORGET THE DOT AFTER IMAGE NAME)**
 ```bash	
-cd test_hello	
+cd helloworld	
 cp popcorn-hello_aarch64 popcorn-hello #if you are running on ARM
 cp popcorn-hello_x86-64 popcorn-hello #if you are running on x86
 docker build -t myhello . 
@@ -169,14 +169,13 @@ Send recode checkpoint images to target machine
 ssh $target@x86_machine
 ```
 Login to target machine 
-```bash
-cp -r test_hello /app
-```
 In target machine still need a same container
 ```bash	
-cd test_hello
+cd helloworld
 
 cp popcorn-hello_x86-64 popcorn-hello
+
+cp -r ../helloworld /app
 
 docker build -t myhello .
 
@@ -204,9 +203,9 @@ In Dockerfile, CMD "--protected-mode", "no" will allow redis accept test data se
 ```
 
 ```bash
-cp -r test_redis /app
+cp -r popcorn-redis /app
 
-cd test_redis
+cd popcorn-redis
 
 cp redis-server_aarch64 redis-server
 
@@ -245,9 +244,9 @@ scp -r simple $target@x86_machine:~
 
 ssh $target@x86_machine
 
-cp -r test_redis /app
+cp -r popcorn-redis /app
 
-cd test_redis
+cd popcorn-redis
 
 cp redis-server_x86-64 redis-server
 
