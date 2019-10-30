@@ -13,10 +13,10 @@ cd /var/lib/docker/containers/$PID/checkpoints/$CHECKPOINT_NAME/; crit recode -t
 
 cd -
 
-cp -r /var/lib/docker/containers/$PID/checkpoints/$CHECKPOINT_NAME/simple . 
+cp -r /var/lib/docker/containers/$PID/checkpoints/$CHECKPOINT_NAME/simple ./$CHECKPOINT_NAME
 
 rm -r /var/lib/docker/containers/$PID/checkpoints/$CHECKPOINT_NAME/simple
-for i in ./simple/core-*
+for i in ./$CHECKPOINT_NAME/core-*
 do
 	crit decode -i $i -o $i.dec
 	sed -i 's#"seccomp_mode": "filter",# #' $i.dec
