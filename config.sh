@@ -1,7 +1,6 @@
 #!/bin/bash
 # Author: Tong Xing. 
 # Stevens Institute of technology 2020 
-set -x
 set -e
 
 sudo apt-get update
