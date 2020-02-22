@@ -1,4 +1,8 @@
 #!/bin/bash
+# Author: Tong Xing
+# Stevens Institute of Technology 2020
+# This script will help user dump the docker and recode the image by using criu-het
+# It will generate a directroy contains all snapshot images in current pwd.
 set -x
 set -e
 

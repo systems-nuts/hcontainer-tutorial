@@ -1,6 +1,7 @@
 #!/bin/bash
 # Author: Tong Xing. 
 # Stevens Institute of technology 2020 
+# This script will help user build basic enviroment. 
 set -e
 
 sudo apt-get update
