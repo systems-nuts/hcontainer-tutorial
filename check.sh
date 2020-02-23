@@ -3,6 +3,8 @@
 # Stevens Institute of Technology 2020
 # This script will help user check current Cgroup support
 # Recompile the kernel incase some cgroup not support. 
+
+
 echo check cgroup subsystem....
 if [ -d "/sys/fs/cgroup/blkio" ]
 then

@@ -10,8 +10,11 @@ EXE=$2
 WDIR=$3
 sudo cp -r $DIR $WDIR
 arch=$(uname -m)
-if [ $arch="x86_64" ];then
+if [ "$arch" = "x86_64" ]
+then
 	arch="x86-64"
+else 
+	arch="aarch64"
 fi
 cd $DIR  && cp $EXE'_'$arch $EXE 	&& sudo docker build -t hcontainer . 1>/dev/null 2>&1
 CID=$(sudo docker container create hcontainer)

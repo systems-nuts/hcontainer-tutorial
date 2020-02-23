@@ -16,3 +16,6 @@ cd criu && git checkout heterogeneous-simplified
 cpucore=sudo cat /proc/cpuinfo |grep "processor" |wc -l
 sudo make -j$cpucore
 sudo make install
+sudo apt install python-pip -y 
+pip install ipaddress
+pip install pyfastcopy
