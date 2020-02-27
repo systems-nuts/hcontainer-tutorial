@@ -41,6 +41,7 @@ sudo docker container start $CID
 RARCH=$(ssh $TARGET_MACHINE "uname -m")
 ps -A | grep $EXE
 PID=$(ps -A | grep $EXE | awk '{print $1}' | sed -n '1p')
+#The notify 
 sudo popcorn-notify $PID $RARCH 
 sudo docker checkpoint create $CID check_hcontainer
 sudo ./recode.sh $CID check_hcontainer $RARCH
