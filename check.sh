@@ -4,6 +4,20 @@
 # This script will help user check current Cgroup support
 # Recompile the kernel incase some cgroup not support. 
 
+help()
+{
+    cat <<- EOF
+Desc: check is the helper function to check the CGroup features.
+Usage: ./check.sh
+Author: Tong Xing
+Stevens Institute of Technology 2020
+EOF
+    exit 0
+}
+if [ $# != 0 ]
+then
+    help
+fi
 
 echo check cgroup subsystem....
 if [ -d "/sys/fs/cgroup/blkio" ]
