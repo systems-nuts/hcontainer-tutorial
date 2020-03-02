@@ -12,7 +12,7 @@ help()
     cat <<- EOF
 Desc: Popcorn is for migrate container cross ISAs
 Usage: ./popcorn.sh <Container DIR> <TARGET Machine>
-    - Container DIR is the directory store the Dockerfile to build a docker image
+    - Container DIR is the path of directory store the Dockerfile to build a docker image
     - TARGET Machine is the target machine user@ip. example: popcorn@10.4.4.111
 Example: ./popcorn.sh ./helloworld ubuntu@172.31.23.242
 Author: Tong Xing
@@ -32,11 +32,15 @@ if [ $# != 2 ]
 then 
     help
 fi
+DIR=$(bash -c "echo $(cd $DIR ; pwd)")
 WDIR=$(cat $DIR/Dockerfile | grep WORKDIR | awk '{print $2}' | sed -n '1p')
 echo check cgroup
-if [ -f "./check.sh" ]
+if [ -f "./scripts/check.sh" ]
 then
-        sudo bash -c "./check.sh"
+	echo local cgroup..........
+        bash -c "./scripts/check.sh"
+	echo remote cgroup.........
+	ssh $TARGET_MACHINE "bash" < ./scripts/check.sh
 else
 	echo "check.sh can't find..." || exit 1
 fi
@@ -46,9 +50,9 @@ EXE=$(echo ${BIN%_*})
 echo EXE
 
 
-if [ -f "./builder.sh" ]
+if [ -f "./scripts/builder.sh" ]
 then
-	CID=$(sudo bash -c "./builder.sh $DIR")
+	CID=$(sudo bash -c "./scripts/builder.sh $DIR")
 else
         echo  "builder.sh can't find..." || exit 1
 fi
@@ -56,20 +60,19 @@ fi
 echo start run container in host
 sudo docker container start $CID
 echo wait 60 sec for host running 
-sleep 60s
-bash -c "sudo cat /var/lib/docker/containers/$CID/$CID-json.log"
+#sleep 60s
 echo start dump
-if [ -f "./dump.sh" ]
+if [ -f "./scripts/dump.sh" ]
 then
-        bash -c "./dump.sh $CID $TARGET_MACHINE $EXE"
+        bash -c "cd scripts ; ./dump.sh $CID $TARGET_MACHINE $EXE;cd -"
 else
         echo  "dump.sh can't find..." || exit 1
 fi
-CHECKPOINT="./check_hcontainer"
+CHECKPOINT="/tmp/check_hcontainer"
 echo start restore
-if [ -f "./restore.sh" ]
+if [ -f "./scripts/restore.sh" ]
 then
-        bash -c "./restore.sh $DIR $TARGET_MACHINE $CHECKPOINT"
+        bash -c "cd scripts; ./restore.sh $DIR $TARGET_MACHINE $CHECKPOINT"
 else
         echo  "restore.sh can't find..." || exit 1
 fi
