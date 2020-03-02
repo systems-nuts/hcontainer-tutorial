@@ -1,8 +1,13 @@
 # Author: Tong Xing
 # Stevens Institute of Technology 2020
 
-Add help option to script
-Fill up comments
-Add an example 
-Rewrite the README
- 
+Add help option to scripts (done)
+Orgnize the scripts (done)
+Test helloworld (done)
+Test helloworld x86->arm and arm->x86 (done)
+Test Redis ()
+Test Redis x86->arm and arm->x86 ()
+Fill up comments ()
+Add an good example ()
+Rewrite the README ()
+
