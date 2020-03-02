@@ -6,18 +6,14 @@
 # This script will build a container  
 #set -x
 DIR=$1
-EXE=$2
-WDIR=$3
 
 help()
 {
     cat <<- EOF
 Desc: Build is a helper function to help build a H-container
-Usage: ./builder.sh <Container DIR> <Exectutable Binary> <Work DIR>
+Usage: ./builder.sh <Container DIR> <Work DIR>
     - Container DIR is the directory store the Dockerfile to build a docker image
-    - Exectutable Binary is the popcorn compiled binary file pre-fix (w/o _x86-64 or _aarch64) 
-    - Work DIR is the name of you Container Work DIR, setting in Dockerfile
-Example: ./builder.sh ./helloworld popcorn-hello /app
+Example: ./builder.sh ./helloworld popcorn-hello
 Author: Tong Xing
 Stevens Institute of Technology 2020
 EOF
@@ -31,12 +27,14 @@ while [ -n "$1" ];do
                 *) break;;
 esac
 done
-if [ $# != 3 ]
+if [ $# != 1 ]
 then
     help
 fi
 
-
+BIN=$(ls $DIR | grep aarch64)
+EXE=$(echo ${BIN%_*})
+WDIR=$(cat $DIR/Dockerfile | grep WORKDIR | awk '{print $2}' | sed -n '1p')
 sudo cp -r $DIR $WDIR
 arch=$(uname -m)
 if [ "$arch" = "x86_64" ]

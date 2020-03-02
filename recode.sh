@@ -5,7 +5,6 @@
 # It will generate a directroy contains all snapshot images in current pwd.
 #set -x
 set -e
-
 PID=$1
 CHECKPOINT_NAME=$2
 TARGET=$3
@@ -46,9 +45,8 @@ cd /var/lib/docker/containers/$PID/checkpoints/$CHECKPOINT_NAME/; crit recode -t
 
 cd -
 
-cp -r /var/lib/docker/containers/$PID/checkpoints/$CHECKPOINT_NAME/simple ./$CHECKPOINT_NAME
+mv /var/lib/docker/containers/$PID/checkpoints/$CHECKPOINT_NAME/simple ./$CHECKPOINT_NAME
 
-rm -r /var/lib/docker/containers/$PID/checkpoints/$CHECKPOINT_NAME/simple
 for i in ./$CHECKPOINT_NAME/core-*
 do
 	crit decode -i $i -o $i.dec
