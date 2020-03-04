@@ -52,9 +52,11 @@ sudo sed -i 's/"CapAdd":null/"CapAdd":["all"]/' /var/lib/docker/containers/$CID/
 if [ "$2" = "-p" ]
 then
 	sudo sed -i "s/\"PortBindings\":{}/\"PortBindings\":{\"$CONTAINER_PORT\/tcp\":[{\"HostIp\":\"\",\"HostPort\":\"$HOST_PORT\"}]}/" /var/lib/docker/containers/$CID/hostconfig.json
+	sudo sed -i "s/\"SecurityOpt\":null/\"SecurityOpt\":[\"seccomp=unconfined\"]/" /var/lib/docker/containers/$CID/hostconfig.json
 	sudo sed -i "s/\"AttachStderr\":false,/\"AttachStderr\":false,\"ExposedPorts\":{\"$CONTAINER_PORT\/tcp\":{}},/" /var/lib/docker/containers/$CID/config.v2.json
 	sudo sed -i "s/\"AttachStderr\":true,/\"AttachStderr\":false,\"ExposedPorts\":{\"$CONTAINER_PORT\/tcp\":{}},/" /var/lib/docker/containers/$CID/config.v2.json
 	sudo sed -i "s/\"Ports\":{}/\"Ports\":{\"$CONTAINER_PORT\/tcp\":[{\"HostIp\":\"0.0.0.0\",\"HostPort\":\"$HOST_PORT\"}]}/" /var/lib/docker/containers/$CID/config.v2.json
+	sudo sed -i "s/\"SeccompProfile\":\"\"/\"SeccompProfile\":\"unconfined\"/" /var/lib/docker/containers/$CID/config.v2.json
 fi
 sudo service docker restart 1>/dev/null 2>&1 
 echo $CID
