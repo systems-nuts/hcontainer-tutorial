@@ -6,18 +6,29 @@ This guide targets a H-Containers deployment on Amazon AWS only. A future guide 
 
 1. Recommended Systems/AMIs: Linux 4.15.0-1043-aws #45-Ubuntu **x86_64** and **aarch64**
 
-2. Install Docker (version 18.09.8).
+2. Inorder to migrate in AWS machines, both of your machines need to have ssh-keygen setup since it is impossible to login to your AWS machine without public key. AWS will give you a  public key, but in order to run the script successfully,higtly recomand user to set up ssh-keygen in your machines.
+```bash
+ssh-keygen
+```
+copy the ~/.ssh/id\_rsa.pub to another machine authorizedi\_keys
+
+3. The config.sh script will help you to do the following set up, with -i flag, it will also download and install criu.
+```bash
+$ ./config.sh 
+``` 
+
+4. Install Docker (version 18.09.8).
 ```bash
 $ sudo apt-get update
 $ sudo apt install docker.io
 ```
 
-3. Verify Docker is installed correctly by running the hello-world image. (Offical instruction from Docker).
+5. Verify Docker is installed correctly by running the hello-world image. (Offical instruction from Docker).
 ```bash
 $ sudo docker run hello-world 
 ```
 
-4. Turn on the Docker experimental feature and add the following (if daemon.json file does not exist, create it):
+6. Turn on the Docker experimental feature and add the following (if daemon.json file does not exist, create it):
 ```bash
 vim /etc/docker/daemon.json (docker daemon configration file)
 
@@ -25,12 +36,12 @@ vim /etc/docker/daemon.json (docker daemon configration file)
 	"experimental": true
 }
 ```
-5. Restart Docker
+7. Restart Docker
 ```bash
 service docker restart
 ```
 
-6. Place/install the following repositories in a different directory on your machine:
+8. Place/install the following repositories in a different directory on your machine:
 
 	a. CRIU (criu.org)
 	
@@ -76,8 +87,15 @@ service docker restart
 
 ## Contents (of hcontainer-docker) 
 ```
-configure.sh 					
-recode.s 						
+config.sh 					 				
+popcorn.sh
+scripts/
+	- builder.sh
+	- check.sh
+	- dump.sh
+	- recode.sh
+	- restore.sh
+redis-cli
 redis-benchmark 						
 helloworld/ 					
 	- Dockerfile 				
@@ -90,8 +108,27 @@ popcorn-redis/
 	- redis-server_aarch64
 	- redis-server_x86-64
 ```
+## Example using scripts
 
-## Example
+We provide scripts that can help you to do migration easily.
+The scripts intros:
+1. check.sh will help user check current Cgroup support
+2. builder.sh is helper to build H-container
+3. dump.sh can help you dump the container and recode image, generate the dumped images in current dir, with Container ID and executable file given 
+4. recode.sh is for process dumped images and recode it
+5. restore.sh is for restore Hcontainer in remote machine
+
+popcorn.sh will call these scripts separately. 
+popcorn.sh takes 2 required arguments and 2 optional arguments 
+\<container directory\> \<target machine\> \[-p\] \[port:port\]
+There is more detail if you do ./popcorn.sh -h
+This is a simple try of helloworld and redis:
+```bash
+./popcorn.sh ./helloworld x86_machine@10.10.10.10 
+./popcorn.sh ./popcorn-redis arm_machine@10.10.10.10 -p 6379:6379 
+```
+
+## Example by your self
 
 We provide examples step by step to explain different senarios, from x86 to ARM and vice versa.
 
