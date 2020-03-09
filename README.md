@@ -6,11 +6,11 @@ This guide targets a H-Containers deployment on Amazon AWS only. A future guide 
 
 1. Recommended Systems/AMIs: Linux 4.15.0-1043-aws #45-Ubuntu **x86_64** and **aarch64**
 
-2. Inorder to migrate in AWS machines, both of your machines need to have ssh-keygen setup since it is impossible to login to your AWS machine without public key. AWS will give you a  public key, but in order to run the script successfully,higtly recomand user to set up ssh-keygen in your machines.
+2. Inorder to migrate in AWS machines, both of your machines need to have ssh-keygen setup. Since it is impossible to login to your AWS machine without public key. AWS will give you a public key, but in order to run the script successfully, higtly recomand user to set up ssh-keygen in your machines.
 ```bash
-ssh-keygen
+ssh-keygen 
+#copy the ~/.ssh/id\_rsa.pub to another machine authorizedi\_keys
 ```
-copy the ~/.ssh/id\_rsa.pub to another machine authorizedi\_keys
 
 3. The config.sh script will help you to do the following set up, with -i flag, it will also download and install criu.
 ```bash
@@ -118,10 +118,10 @@ The scripts intros:
 4. recode.sh is for process dumped images and recode it
 5. restore.sh is for restore Hcontainer in remote machine
 
-popcorn.sh will call these scripts separately. 
-popcorn.sh takes 2 required arguments and 2 optional arguments 
-\<container directory\> \<target machine\> \[-p\] \[port:port\]
-There is more detail if you do ./popcorn.sh -h
+popcorn.sh will call these scripts separately.  <br>
+popcorn.sh takes 2 required arguments and 2 optional arguments  <br>
+\<container directory\> \<target machine\> \[-p\] \[port:port\] <br>
+There is more detail if you do ./popcorn.sh -h  <br>
 This is a simple try of helloworld and redis:
 ```bash
 ./popcorn.sh ./helloworld x86_machine@10.10.10.10 
