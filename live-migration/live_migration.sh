@@ -47,8 +47,6 @@ cd /tmp/
 echo start redis benchmark
 sudo /tmp/redis-benchmark -t set -n 1000000 -r 10000000  1>/dev/null 2>&1 
 wait
-echo sleep 60 
-sleep 60
 
 echo predump
 sudo criu-het pre-dump --arch aarch64  -t $PID --images-dir predump  --track-mem --shell-job --tcp-established  1>/dev/null 2>&1
