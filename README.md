@@ -8,8 +8,8 @@ This guide targets a H-Containers deployment on Amazon AWS only. A future guide 
 
 2. Inorder to migrate in AWS machines, both of your machines need to have ssh-keygen setup. Since it is impossible to login to your AWS machine without public key. AWS will give you a public key, but in order to run the script successfully, higtly recomand user to set up ssh-keygen in your machines.
 ```bash
-ssh-keygen 
-#copy the ~/.ssh/id\_rsa.pub to another machine authorizedi\_keys
+$ssh-keygen # keep default storage place, just keep click 'return' until done.  
+#copy the content of ~/.ssh/id_rsa.pub to another machine ～/.ssh/authorizedi_keys
 ```
 
 3. The config.sh script will help you to do the following set up, with -i flag, it will also download and install criu.
