@@ -29,8 +29,8 @@ if [ $# != 1 ]
 then
     help
 fi
-sudo rm -rf /tmp/redis  
-ssh $TARGET_MACHINE "sudo rm -rf /tmp/redis "
+sudo rm -rf /tmp/redis /tmp/realdump 
+ssh $TARGET_MACHINE "sudo rm -rf /tmp/redis /tmp/realdump "
 RPID=$(ssh $TARGET_MACHINE "ps -A | grep redis-server")
 ssh $TARGET_MACHINE "sudo kill -9 $RPID" 1>/dev/null 2>&1
 sudo cp -r redis /tmp
