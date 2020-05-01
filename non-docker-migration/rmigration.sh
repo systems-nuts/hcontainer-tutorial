@@ -8,7 +8,7 @@ TARGET_MACHINE=$1
 help()
 {
     cat <<- EOF
-Desc: migration is a normal migration script.(this is for redis example script)
+Desc: migration is a normal migration script from aarch to x86(NEW AWS UNSUPPORT).(this is for redis example script)
 Usage: ./migration <user@ip>
     - TARGET Machine is the target machine user@ip. example: popcorn@10.4.4.111
 Example: ./migration.sh  ubuntu@172.31.23.242 
@@ -45,7 +45,8 @@ mkdir /tmp/realdump
 cd /tmp/
 
 echo dump the redis server
-sudo criu-het dump --arch x86-64 -j -t $PID --images-dir realdump/  --track-mem --shell-job --tcp-established  1>/dev/null 2>&1
+sudo criu-het dump --arch x86-64 -j -t $PID --images-dir realdump/  --tcp-established  1>/dev/null 2>&1
+sleep 3
 wait
 echo send the dump image and source code to the target machine
 sudo scp -r /tmp/redis $TARGET_MACHINE:/tmp  1>/dev/null 2>&1

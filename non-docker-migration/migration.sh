@@ -8,7 +8,7 @@ TARGET_MACHINE=$1
 help()
 {
     cat <<- EOF
-Desc: migration is a normal migration script.(this is for redis example script)
+Desc: migration is a normal migration script. from x86 to arm(this is for redis example script)
 Usage: ./migration <user@ip>
     - TARGET Machine is the target machine user@ip. example: popcorn@10.4.4.111
 Example: ./migration.sh  ubuntu@172.31.23.242 
