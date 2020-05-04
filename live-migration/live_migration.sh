@@ -11,7 +11,7 @@ help()
 Desc: live_migration is a live migration script.(this is for redis example script)
 Usage: ./live_migration <user@ip>
     - TARGET Machine is the target machine user@ip. example: popcorn@10.4.4.111
-Example: ./popcorn.sh  ubuntu@172.31.23.242 
+Example: ./live_migration.sh  ubuntu@172.31.23.242 
 Author: Tong Xing
 Stevens Institute of Technology 2020
 EOF
