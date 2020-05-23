@@ -17,7 +17,7 @@ $ssh-keygen # keep default storage place, just keep click 'return' until done.
 $ ./config.sh 
 ``` 
 
-4. Install Docker (version 18.09.8).
+4. Install Docker (version 18.09.8). **Note: Docker version 19.03.5 checkpoint is not working.**
 ```bash
 $ sudo apt-get update
 $ sudo apt install docker.io
