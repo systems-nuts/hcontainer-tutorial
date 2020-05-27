@@ -198,8 +198,9 @@ Call recode script to recode the image file, it will copy the image file to curr
 ```
 
 **recode.sh take 3 args, 1.Container Id  2.Checkpoint name  3.Target archtecture**
+**recode.sh will take take the checkpoint, and the output directory will be generated in /tmp**
 ```bash	
-scp -r simple $target@x86_machine:~
+scp -r /tmp/simple $target@x86_machine:~
 ```
 Send recode checkpoint images to target machine
 ```bash
