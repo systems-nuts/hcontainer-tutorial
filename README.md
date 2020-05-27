@@ -276,9 +276,9 @@ popcorn-notify 7438 aarch64
 
 docker checkpoint create 4927a9ad4109ce5561f8ad346372fa11084c1fb586f0022c44d70a1d4fd048f2 simple
 
-./recode.sh 4927a9ad4109ce5561f8ad346372fa11084c1fb586f0022c44d70a1d4fd048f2 simple aarch64
+./scripts/recode.sh 4927a9ad4109ce5561f8ad346372fa11084c1fb586f0022c44d70a1d4fd048f2 simple aarch64
 
-scp -r simple $target@arm_machine:~
+scp -r /tmp/simple $target@arm_machine:~
 
 ssh $target@arm_machine
 
@@ -290,13 +290,14 @@ cp -r ../popcorn-redis /app
 
 docker build -t myredis .
 
+# Instead, you also can do it in hostconfig file to add capabilities and config.v2.json to add port mapping, please have look of scripts/builder.sh
 docker run --cap-add all -d -p 6379:6379 myredis
 
 	10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394
 
 docker container stop 10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394
 
-cp -r ~/simple /var/liv/docker/containers/10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394/checkpoints
+cp -r /tmp/simple /var/liv/docker/containers/10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394/checkpoints
 
 docker container start --checkpoint simple 10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394
 
