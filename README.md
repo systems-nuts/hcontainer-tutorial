@@ -12,9 +12,11 @@ $ssh-keygen # keep default storage place, just keep click 'return' until done.
 #copy the content of ~/.ssh/id_rsa.pub to another machine ～/.ssh/authorizedi_keys
 ```
 
-3. The config.sh script will help you to do the following set up, with -i flag, it will also download and install criu.
+3. **The config.sh script will help you to do the following set up, with -i flag, it will compile and install criu.**
 ```bash
 $ ./config.sh 
+or
+$ ./config.sh -i 
 ``` 
 
 4. Install Docker (version 18.09.8). **Note: Docker version 19.03.5 checkpoint is not working.**
