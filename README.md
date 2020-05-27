@@ -185,7 +185,7 @@ Example output:
 
 Notify the process (**IF /app DIRECTORY IS NOT COPIED, NOTIFY WILL FAIL**)
 ```bash
-popcorn-notify 4573 x86-64(x86_64)
+popcorn-notify 4573 x86-64
 ```
 
 After notify succeeded, this command will create a checkpoint, name is last args (IN ALL EXAMPLES IS simple)
