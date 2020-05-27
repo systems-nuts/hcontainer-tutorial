@@ -194,7 +194,7 @@ docker checkpoint create a40a7eb069172dc64dc771128cce91e942656f1cfe8b4d11ac97a99
 ```
 Call recode script to recode the image file, it will copy the image file to current directory. 
 ```bash	
-./recode.sh a40a7eb069172dc64dc771128cce91e942656f1cfe8b4d11ac97a99b08f64fd9 simple x86-64(x86_64)
+./recode.sh a40a7eb069172dc64dc771128cce91e942656f1cfe8b4d11ac97a99b08f64fd9 simple x86-64
 ```
 
 **recode.sh take 3 args, 1.Container Id  2.Checkpoint name  3.Target archtecture**
