@@ -4,7 +4,7 @@ This guide targets a H-Containers deployment on Amazon AWS only. A future guide 
 
 ## Prerequisites
 
-1. Recommended Systems/AMIs: Linux 4.15.0-1043-aws #45-Ubuntu **x86_64** and **aarch64**
+1. Recommended Systems/AMIs: Linux 4.15.0-1043-aws #45-Ubuntu **x86_64** and **aarch64**  **Note: For Ubuntu 20.04 user, the pre-requites packege of CRIU-HET is different, please following this [wiki](https://github.com/systems-nuts/criu-het/wiki/CRIUHET-Installation)
 
 2. Inorder to migrate in AWS machines, both of your machines need to have ssh-keygen setup. Since it is impossible to login to your AWS machine without public key. AWS will give you a public key, but in order to run the script successfully, higtly recomand user to set up ssh-keygen in your machines.
 ```bash
