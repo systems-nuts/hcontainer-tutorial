@@ -86,7 +86,7 @@ service docker restart
 	Please read the README file inside container-nginx repository to compile and install it
 	```
 
-## Contents (of hcontainer-docker) 
+## Contents (of hcontainer-docker script migration) 
 ```
 config.sh 					 				
 popcorn.sh
@@ -111,7 +111,7 @@ popcorn-redis/
 ```
 ## Example of using scripts
 
-We provide scripts that can help you to do migration easily.
+We provide scripts that can help you to do migration easily. **Nginx is not support by script**
 The scripts intros:
 1. check.sh will help user check current Cgroup support
 2. builder.sh is helper to build H-container
@@ -309,5 +309,86 @@ You can also use redis-benchmark to test it
 ./redis-benchmark -h 127.0.0.1 -p 6379
 ```
 
- 
+### Example for nginx migration from x86 to ARM
+```
+In Dockerfile, the CMD ["./popcorn-nginx","-g","daemon off;"].
+
+Because in Container, nginx is process 1, docker will exit when nginx initilazation is over
+
+In order to keep container running, it needs args '-g daemon off;' to force it hang on.	
+```
+```bash
+cp -r nginx /usr/local 
+	
+cd test_nginx
+
+cp popcorn-nginx_x86-64 popcorn-nginx
+
+cp -r ../test_nginx /app	
+
+docker build -t mynginx .
+
+docker run --cap-add all -d -v /usr/local/nginx/logs/:/usr/local/nginx/logs/ -v /usr/local/nginx/conf/:/usr/local/nginx/conf/ mynginx
+
+ 	4e6f433906d85a874acdc1b3138ffc9389e74e7120e11f5e0aa25dd08d3270f4
+```
+Directly run docker image to create a Container of nginx. 
+
+--cap-add all : it will add all capabilities, no need for change config file
+
+```text
+-v: volumn to mount system file system with docker file system.(**THIS IS RESON WHY NGINX DOCKERFILE NEED UBUNTU IMAGE LOAD**)
+
+/usr/local/nginx/logs: Nginx needs error.log to run   
+
+/user/local/nginx/conf: Nginx needs nginx.conf to run
+
+-d: Run in background, this args cause running image will create Container 
+```
+
+```bash
+docker ps
+
+ps -A | grep nginx
+	
+	755 ?        00:00:00 popcorn-nginx
+	756 ?        00:00:00 popcorn-nginx
+```
+```bash
+popcorn-notify 755 aarch64
+
+popcorn-notify 756 aarch64
+
+docker checkpoint create 4e6f433906d85a874acdc1b3138ffc9389e74e7120e11f5e0aa25dd08d3270f4 simple
+
+./scripts/recode.sh 4e6f433906d85a874acdc1b3138ffc9389e74e7120e11f5e0aa25dd08d3270f4 simple aarch64
+
+scp -r simple $target@x86_machine:~
+
+ssh $target@ARM_machine
+
+cp -r test_nginx /app
+
+cd test_nginx
+
+cp popcorn-nginx_aarch64 popcorn-nginx
+
+docker build -t mynginx
+
+# Likewise the capabilities and volumn mapping and port mapping can be done in hostconfig and config.v2.json file. 
+docker run --cap-add all -d -v /usr/local/nginx/logs/:/usr/local/nginx/logs/ -v /usr/local/nginx/conf/:/usr/local/nginx/conf/ mynginx
+	
+	10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394
+```
+```bash
+docker container stop 10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394
+```
+Since we run image to create a container, so this time, we need stop it first.
+```bash
+cp -r ~/simple /var/lib/docker/containers/10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394/checkpoints
+
+docker container start --checkpoint simple 10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394 
+
+docker ps
+```
 
