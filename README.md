@@ -12,14 +12,14 @@ $ssh-keygen # keep default storage place, just keep click 'return' until done.
 #copy the content of ~/.ssh/id_rsa.pub to another machine ～/.ssh/authorizedi_keys
 ```
 
-3. **The config.sh script will help you to do the following set up, with -i flag, it will compile and install criu.**
+3. **The config.sh script will help you to do all following set-ups, with -i flag, it will compile and install criu.**
 ```bash
 $ ./config.sh 
 or
 $ ./config.sh -i 
 ``` 
 
-4. Install Docker (version 18.09.8). **Note: Docker version in both machine should be identical, either both 18.09 or 19.03.**
+4. Install Docker (version 19.03). **Note: Docker version in both machine should be identical, either both 18.09 or 19.03.**
 ```bash
 $ sudo apt-get update
 $ sudo apt install docker.io
@@ -49,7 +49,7 @@ service docker restart
 	
 	i. Install CRIU dependendies:
 	```bash
-	$ sudo apt-get update && sudo apt-get install -y protobuf-c-compiler libprotobuf-c0-dev protobuf-compiler libprotobuf-dev:amd64 gcc build-essential bsdmainutils python git-core asciidoc make htop git curl supervisor cgroup-lite libapparmor-dev libseccomp-dev libprotobuf-dev libprotobuf-c0-dev protobuf-c-compiler protobuf-compiler python-protobuf libnl-3-dev libcap-dev libaio-dev apparmor libnet1-dev
+	$ sudo apt-get update && sudo apt-get install -y protobuf-c-compiler libprotobuf-c0-dev protobuf-compiler gcc build-essential bsdmainutils python git-core asciidoc make htop git curl supervisor cgroup-lite libapparmor-dev libseccomp-dev libprotobuf-dev libprotobuf-c0-dev protobuf-c-compiler protobuf-compiler python-protobuf libnl-3-dev libcap-dev libaio-dev apparmor libnet1-dev
 	```
 	ii. Clone the h-containers CRIU fork (version heterogeneous-simplified GitID: 4f92d4ad):
 	```bash
@@ -67,7 +67,6 @@ service docker restart
 	make clean
 	make
 	make install
-	?[make docker-build]
 	```
 
 	b. *popcorn-compiler* (branch: criu) - If you want to use Popcorn Compiler (harder)
@@ -110,20 +109,20 @@ popcorn-redis/
 	- redis-server_aarch64
 	- redis-server_x86-64
 ```
-## Example using scripts
+## Example of using scripts
 
 We provide scripts that can help you to do migration easily.
 The scripts intros:
 1. check.sh will help user check current Cgroup support
 2. builder.sh is helper to build H-container
 3. dump.sh can help you dump the container and recode image, generate the dumped images in current dir, with Container ID and executable file given 
-4. recode.sh is for process dumped images and recode it
+4. recode.sh is for process dumped images and recode it **this is needed also for manually Docker migrate**
 5. restore.sh is for restore Hcontainer in remote machine
 
-popcorn.sh will call these scripts separately.  <br>
-popcorn.sh takes 2 required arguments and 2 optional arguments  <br>
-\<container directory\> \<target machine\> \[-p\] \[port:port\] <br>
-There is more detail if you do ./popcorn.sh -h  <br>
+**popcorn.sh** will call these scripts separately.  <br>
+popcorn.sh takes **2 <required arguments\>** and **[2 optional arguments]**  <br>
+**\<container directory\> \<target machine\> \[-p\] \[port:port\]** <br>
+There is more detail if you do **./popcorn.sh -h**  <br>
 This is a simple try of helloworld and redis:
 ```bash
 ./popcorn.sh ./helloworld x86_machine@10.10.10.10 
@@ -196,6 +195,7 @@ docker checkpoint create a40a7eb069172dc64dc771128cce91e942656f1cfe8b4d11ac97a99
 ```
 Call recode script to recode the image file, it will copy the image file to current directory. 
 ```bash	
+cd scripts/
 ./recode.sh a40a7eb069172dc64dc771128cce91e942656f1cfe8b4d11ac97a99b08f64fd9 simple x86-64
 ```
 
