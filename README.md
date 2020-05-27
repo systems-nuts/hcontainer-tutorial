@@ -108,6 +108,15 @@ popcorn-redis/
 	- redis-server
 	- redis-server_aarch64
 	- redis-server_x86-64
+test-nginx/
+	- Dockerfile
+	- popcorn-nginx
+	- popcorn-nginx_aarch64
+	- popcorn-nginx_x86-64
+nginx/ # a nginx configuration file, host machine may already have it if it had install nginx before. 
+live-migration/ # criu live migration test script
+non-docker-migration/ # H-container normal migration script 
+
 ```
 ## Example of using scripts
 
