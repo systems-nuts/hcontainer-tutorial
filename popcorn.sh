@@ -66,8 +66,8 @@ fi
 
 echo start run container in host
 sudo docker container start $CID
-echo wait  sec for host running, you can config yourself.
-#sleep 60s
+echo wait 5 sec for host running, you can config yourself.
+sleep 5s
 echo start dump
 if [ -f "./scripts/dump.sh" ]
 then
