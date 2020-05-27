@@ -136,7 +136,7 @@ We provide examples step by step to explain different senarios, from x86 to ARM 
 1. First one is using popcorn-hello as test program. 
 3. Second one is using redis-server as test program. 
 
-### Example for popcorn-hello migration from arm to x86
+### Example for popcorn-hello migration from ARM to x86
 
 In docker, the program workdir is set to /app
 ```bash
@@ -241,11 +241,11 @@ If it shows running, which means migration successfully, also you can check popc
 In Dockerfile, CMD "--protected-mode", "no" will allow redis accept test data send from benchmark.
 
 ```bash
-cp -r popcorn-redis /app
-
 cd popcorn-redis
 
-cp redis-server_aarch64 redis-server
+cp redis-server_x86-64 redis-server
+
+cp -r ../popcorn-redis /app
 
 docker build -t myredis .
 
@@ -272,21 +272,21 @@ ps -A | grep redis
 ```
 
 ```bash
-popcorn-notify 7438 x86-64
+popcorn-notify 7438 aarch64
 
 docker checkpoint create 4927a9ad4109ce5561f8ad346372fa11084c1fb586f0022c44d70a1d4fd048f2 simple
 
-./recode.sh 4927a9ad4109ce5561f8ad346372fa11084c1fb586f0022c44d70a1d4fd048f2 simple x86-64
+./recode.sh 4927a9ad4109ce5561f8ad346372fa11084c1fb586f0022c44d70a1d4fd048f2 simple aarch64
 
-scp -r simple $target@x86_machine:~
+scp -r simple $target@arm_machine:~
 
-ssh $target@x86_machine
-
-cp -r popcorn-redis /app
+ssh $target@arm_machine
 
 cd popcorn-redis
 
-cp redis-server_x86-64 redis-server
+cp redis-server_aarch64 redis-server
+
+cp -r ../popcorn-redis /app
 
 docker build -t myredis .
 
