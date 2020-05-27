@@ -236,11 +236,9 @@ docker ps
 ```
 If it shows running, which means migration successfully, also you can check popcorn-hello output in log file located in the container directory
 
-```
-### Example for redis migration from arm to x86
-```
+### Example for redis migration from x86 to ARM
+
 In Dockerfile, CMD "--protected-mode", "no" will allow redis accept test data send from benchmark.
-```
 
 ```bash
 cp -r popcorn-redis /app
