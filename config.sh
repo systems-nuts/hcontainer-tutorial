@@ -30,6 +30,7 @@ while [ -n "$1" ];do
                 *) break;;
 esac
 done
+sudo apt-get update
 sudo apt-get install docker.io -y
 sudo docker run hello-world
 sudo bash -c 'echo -e "{\n\t\"experimental\": true\n}" >> /etc/docker/daemon.json'
