@@ -40,7 +40,7 @@ if [ -d $WDIR ];
 then
 	sudo rm -r $WDIR
 else
-	echo fuck
+	echo problem! please remove /app or any workdir(descript inside Dockerfile) 
 fi
 if [ -f "./scripts/check.sh" ]
 then
@@ -66,8 +66,8 @@ fi
 
 echo start run container in host
 sudo docker container start $CID
-echo wait 60 sec for host running 
-#sleep 60s
+echo wait 5 sec for host running, you can config yourself.
+sleep 5s
 echo start dump
 if [ -f "./scripts/dump.sh" ]
 then

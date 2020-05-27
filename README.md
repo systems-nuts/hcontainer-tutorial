@@ -4,20 +4,22 @@ This guide targets a H-Containers deployment on Amazon AWS only. A future guide 
 
 ## Prerequisites
 
-1. Recommended Systems/AMIs: Linux 4.15.0-1043-aws #45-Ubuntu **x86_64** and **aarch64**
+1. Recommended Systems/AMIs: Linux 4.15.0-1043-aws #45-Ubuntu **x86_64** and **aarch64**  **Note: For Ubuntu 20.04 user, the pre-requites packege of CRIU-HET is different, please following this** [wiki](https://github.com/systems-nuts/criu-het/wiki/CRIUHET-Installation) 
 
 2. Inorder to migrate in AWS machines, both of your machines need to have ssh-keygen setup. Since it is impossible to login to your AWS machine without public key. AWS will give you a public key, but in order to run the script successfully, higtly recomand user to set up ssh-keygen in your machines.
 ```bash
-ssh-keygen 
-#copy the ~/.ssh/id\_rsa.pub to another machine authorizedi\_keys
+$ssh-keygen # keep default storage place, just keep click 'return' until done.  
+#copy the content of ~/.ssh/id_rsa.pub to another machine ～/.ssh/authorizedi_keys
 ```
 
-3. The config.sh script will help you to do the following set up, with -i flag, it will also download and install criu.
+3. **The config.sh script will help you to do all following set-ups, with -i flag, it will compile and install criu.**
 ```bash
 $ ./config.sh 
+or
+$ ./config.sh -i 
 ``` 
 
-4. Install Docker (version 18.09.8).
+4. Install Docker (version 19.03). **Note: Docker version in both machine should be identical, either both 18.09 or 19.03.**
 ```bash
 $ sudo apt-get update
 $ sudo apt install docker.io
@@ -47,7 +49,7 @@ service docker restart
 	
 	i. Install CRIU dependendies:
 	```bash
-	$ sudo apt-get update && sudo apt-get install -y protobuf-c-compiler libprotobuf-c0-dev protobuf-compiler libprotobuf-dev:amd64 gcc build-essential bsdmainutils python git-core asciidoc make htop git curl supervisor cgroup-lite libapparmor-dev libseccomp-dev libprotobuf-dev libprotobuf-c0-dev protobuf-c-compiler protobuf-compiler python-protobuf libnl-3-dev libcap-dev libaio-dev apparmor libnet1-dev
+	$ sudo apt-get update && sudo apt-get install -y protobuf-c-compiler libprotobuf-c0-dev protobuf-compiler gcc build-essential bsdmainutils python git-core asciidoc make htop git curl supervisor cgroup-lite libapparmor-dev libseccomp-dev libprotobuf-dev libprotobuf-c0-dev protobuf-c-compiler protobuf-compiler python-protobuf libnl-3-dev libcap-dev libaio-dev apparmor libnet1-dev
 	```
 	ii. Clone the h-containers CRIU fork (version heterogeneous-simplified GitID: 4f92d4ad):
 	```bash
@@ -65,7 +67,6 @@ service docker restart
 	make clean
 	make
 	make install
-	?[make docker-build]
 	```
 
 	b. *popcorn-compiler* (branch: criu) - If you want to use Popcorn Compiler (harder)
@@ -108,20 +109,20 @@ popcorn-redis/
 	- redis-server_aarch64
 	- redis-server_x86-64
 ```
-## Example using scripts
+## Example of using scripts
 
 We provide scripts that can help you to do migration easily.
 The scripts intros:
 1. check.sh will help user check current Cgroup support
 2. builder.sh is helper to build H-container
 3. dump.sh can help you dump the container and recode image, generate the dumped images in current dir, with Container ID and executable file given 
-4. recode.sh is for process dumped images and recode it
+4. recode.sh is for process dumped images and recode it **this is needed also for manually Docker migrate**
 5. restore.sh is for restore Hcontainer in remote machine
 
-popcorn.sh will call these scripts separately.  <br>
-popcorn.sh takes 2 required arguments and 2 optional arguments  <br>
-\<container directory\> \<target machine\> \[-p\] \[port:port\] <br>
-There is more detail if you do ./popcorn.sh -h  <br>
+**popcorn.sh** will call these scripts separately.  <br>
+popcorn.sh takes **2 <required arguments\>** and **[2 optional arguments]**  <br>
+**\<container directory\> \<target machine\> \[-p\] \[port:port\]** <br>
+There is more detail if you do **./popcorn.sh -h**  <br>
 This is a simple try of helloworld and redis:
 ```bash
 ./popcorn.sh ./helloworld x86_machine@10.10.10.10 
@@ -135,7 +136,7 @@ We provide examples step by step to explain different senarios, from x86 to ARM 
 1. First one is using popcorn-hello as test program. 
 3. Second one is using redis-server as test program. 
 
-### Example for popcorn-hello migration from arm to x86
+### Example for popcorn-hello migration from ARM to x86
 
 In docker, the program workdir is set to /app
 ```bash
@@ -185,7 +186,7 @@ Example output:
 
 Notify the process (**IF /app DIRECTORY IS NOT COPIED, NOTIFY WILL FAIL**)
 ```bash
-popcorn-notify 4573 x86-64(x86_64)
+popcorn-notify 4573 x86-64
 ```
 
 After notify succeeded, this command will create a checkpoint, name is last args (IN ALL EXAMPLES IS simple)
@@ -194,12 +195,14 @@ docker checkpoint create a40a7eb069172dc64dc771128cce91e942656f1cfe8b4d11ac97a99
 ```
 Call recode script to recode the image file, it will copy the image file to current directory. 
 ```bash	
-./recode.sh a40a7eb069172dc64dc771128cce91e942656f1cfe8b4d11ac97a99b08f64fd9 simple x86-64(x86_64)
+cd scripts/
+./recode.sh a40a7eb069172dc64dc771128cce91e942656f1cfe8b4d11ac97a99b08f64fd9 simple x86-64
 ```
 
 **recode.sh take 3 args, 1.Container Id  2.Checkpoint name  3.Target archtecture**
+**recode.sh will take take the checkpoint, and the output directory will be generated in /tmp**
 ```bash	
-scp -r simple $target@x86_machine:~
+scp -r /tmp/simple $target@x86_machine:~
 ```
 Send recode checkpoint images to target machine
 ```bash
@@ -233,18 +236,16 @@ docker ps
 ```
 If it shows running, which means migration successfully, also you can check popcorn-hello output in log file located in the container directory
 
-```
-### Example for redis migration from arm to x86
-```
+### Example for redis migration from x86 to ARM
+
 In Dockerfile, CMD "--protected-mode", "no" will allow redis accept test data send from benchmark.
-```
 
 ```bash
-cp -r popcorn-redis /app
-
 cd popcorn-redis
 
-cp redis-server_aarch64 redis-server
+cp redis-server_x86-64 redis-server
+
+cp -r ../popcorn-redis /app
 
 docker build -t myredis .
 
@@ -271,31 +272,32 @@ ps -A | grep redis
 ```
 
 ```bash
-popcorn-notify 7438 x86-64
+popcorn-notify 7438 aarch64
 
 docker checkpoint create 4927a9ad4109ce5561f8ad346372fa11084c1fb586f0022c44d70a1d4fd048f2 simple
 
-./recode.sh 4927a9ad4109ce5561f8ad346372fa11084c1fb586f0022c44d70a1d4fd048f2 simple x86-64
+./scripts/recode.sh 4927a9ad4109ce5561f8ad346372fa11084c1fb586f0022c44d70a1d4fd048f2 simple aarch64
 
-scp -r simple $target@x86_machine:~
+scp -r /tmp/simple $target@arm_machine:~
 
-ssh $target@x86_machine
-
-cp -r popcorn-redis /app
+ssh $target@arm_machine
 
 cd popcorn-redis
 
-cp redis-server_x86-64 redis-server
+cp redis-server_aarch64 redis-server
+
+cp -r ../popcorn-redis /app
 
 docker build -t myredis .
 
+# Instead, you also can do it in hostconfig file to add capabilities and config.v2.json to add port mapping, please have look of scripts/builder.sh
 docker run --cap-add all -d -p 6379:6379 myredis
 
 	10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394
 
 docker container stop 10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394
 
-cp -r ~/simple /var/liv/docker/containers/10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394/checkpoints
+cp -r /tmp/simple /var/liv/docker/containers/10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394/checkpoints
 
 docker container start --checkpoint simple 10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394
 
