@@ -1,6 +1,6 @@
 # Docker Migration
 
-This guide targets a H-Containers deployment on Amazon AWS only. A future guide will address other deployments.
+This guide targets a H-Containers deployment on Amazon AWS, or any pair machine with identical kernel Cgroup configuration. A future guide will address other deployments.
 
 ## Prerequisites
 
