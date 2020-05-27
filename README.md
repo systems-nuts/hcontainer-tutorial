@@ -19,7 +19,7 @@ or
 $ ./config.sh -i 
 ``` 
 
-4. Install Docker (version 18.09.8). **Note: Docker version 19.03.5 checkpoint is not working.**
+4. Install Docker (version 18.09.8). **Note: Docker version in both machine should be identical, either both 18.09 or 19.03.**
 ```bash
 $ sudo apt-get update
 $ sudo apt install docker.io
