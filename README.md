@@ -113,7 +113,9 @@ test-nginx/
 	- popcorn-nginx
 	- popcorn-nginx_aarch64
 	- popcorn-nginx_x86-64
-nginx/ # nginx configuration dir, including log and default webpage, host machine may already have it if it had install nginx before, Nginx running inside Docker need map this configuration in host machine.
+nginx/ # nginx configuration dir, including log and default webpage
+       # host machine may already have it if it had install nginx before, 
+       # Nginx running inside Docker need map this configuration in host machine.
 live-migration/ # criu live migration test script
 non-docker-migration/ # H-container normal migration script 
 
