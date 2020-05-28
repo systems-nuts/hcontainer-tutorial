@@ -40,7 +40,7 @@ if [ -d $WDIR ];
 then
 	sudo rm -r $WDIR
 else
-	echo problem! please remove /app or any workdir(descript inside Dockerfile) 
+	echo problem! please remove /app or any workdir
 fi
 if [ -f "./scripts/check.sh" ]
 then
