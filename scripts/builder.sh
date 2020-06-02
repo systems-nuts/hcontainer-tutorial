@@ -4,7 +4,7 @@
 # Author Tong Xing 
 # Stevens Institute of Technology
 # This script will build a container  
-set -x
+#set -x
 DIR=$1
 PORT_FLAG=$2
 PORT_BIND=$3

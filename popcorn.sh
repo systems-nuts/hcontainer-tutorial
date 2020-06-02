@@ -2,7 +2,7 @@
 # Author: Tong Xing
 # Stevens Institute of Technology 2020
 set -e
-set -x
+#set -x
 
 DIR=$1
 TARGET_MACHINE=$2
