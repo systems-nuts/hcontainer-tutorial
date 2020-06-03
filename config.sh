@@ -21,7 +21,29 @@ install()
 CRIU-HET will download and compile and install. 
 EOF
     sudo apt-get update
-    sudo apt-get install docker.io -y
+    sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    sudo apt-key fingerprint 0EBFCD88
+    arch=$(uname -m)
+    if [ "$arch" = "x86_64" ]
+    then
+	    sudo add-apt-repository \
+		    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   		    $(lsb_release -cs) \
+   		    stable"
+    else
+	    sudo add-apt-repository \
+            "deb [arch=arm64] https://download.docker.com/linux/ubuntu \
+   	    $(lsb_release -cs) \
+   	    stable"
+    fi
+    sudo apt-get update
+    sudo apt-get install docker-ce=5:18.09.6~3-0~ubuntu-bionic docker-ce-cli=5:18.09.6~3-0~ubuntu-bionic containerd.io 
     sudo docker run hello-world
     sudo bash -c 'echo -e "{\n\t\"experimental\": true\n}" >> /etc/docker/daemon.json'
     sudo service docker restart
@@ -47,7 +69,29 @@ while [ -n "$1" ];do
 esac
 done
 sudo apt-get update
-sudo apt-get install docker.io -y
+sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common -y
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    sudo apt-key fingerprint 0EBFCD88
+    arch=$(uname -m)
+    if [ "$arch" = "x86_64" ]
+    then
+            sudo add-apt-repository \
+                    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+                    $(lsb_release -cs) \
+                    stable"
+    else
+            sudo add-apt-repository \
+            "deb [arch=arm64] https://download.docker.com/linux/ubuntu \
+            $(lsb_release -cs) \
+            stable"
+    fi
+    sudo apt-get update
+    sudo apt-get install docker-ce=5:18.09.6~3-0~ubuntu-bionic docker-ce-cli=5:18.09.6~3-0~ubuntu-bionic containerd.io -y
 sudo docker run hello-world
 sudo bash -c 'echo -e "{\n\t\"experimental\": true\n}" >> /etc/docker/daemon.json'
 sudo service docker restart
