@@ -19,10 +19,22 @@ or
 $ ./config.sh -i 
 ``` 
 
-4. Install Docker (version 19.03). **Note: Docker version in both machine should be identical, either both 18.09 or 19.03.**
+4. Install Docker (version 18.09). **Note: Docker version in both machine should be identical**
 ```bash
-$ sudo apt-get update
-$ sudo apt install docker.io
+#x86
+sudo add-apt-repository \
+		    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   		    $(lsb_release -cs) \
+   		    stable"
+#ARM
+	    sudo add-apt-repository \
+            "deb [arch=arm64] https://download.docker.com/linux/ubuntu \
+   	    $(lsb_release -cs) \
+   	    stable"
+	    
+	    
+ sudo apt-get update
+ sudo apt-get install docker-ce=5:18.09.6~3-0~ubuntu-bionic docker-ce-cli=5:18.09.6~3-0~ubuntu-bionic containerd.io -y
 ```
 
 5. Verify Docker is installed correctly by running the hello-world image. (Offical instruction from Docker).
