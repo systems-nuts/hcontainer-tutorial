@@ -53,7 +53,7 @@ service docker restart
 	```
 	ii. Clone the h-containers CRIU fork (version heterogeneous-simplified GitID: 4f92d4ad):
 	```bash
-	$ git clone https://github.com/systems-nuts/criu.git
+	$ git clone https://github.com/systems-nuts/criu-het.git
 	```
 		
 	iii. Move to the heterogeneous-simplified branch 
