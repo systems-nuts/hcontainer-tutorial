@@ -95,9 +95,7 @@ scripts/
 	- check.sh
 	- dump.sh
 	- recode.sh
-	- restore.sh
-redis-cli
-redis-benchmark 						
+	- restore.sh						
 helloworld/ 					
 	- Dockerfile 				
 	- popcorn-hello 			
