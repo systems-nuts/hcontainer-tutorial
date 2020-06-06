@@ -53,7 +53,7 @@ service docker restart
 	```
 	ii. Clone the h-containers CRIU fork (version heterogeneous-simplified GitID: 4f92d4ad):
 	```bash
-	$ git clone https://github.com/systems-nuts/criu.git
+	$ git clone https://github.com/systems-nuts/criu-het.git
 	```
 		
 	iii. Move to the heterogeneous-simplified branch 
@@ -149,43 +149,38 @@ We provide examples step by step to explain different senarios, from x86 to ARM 
 
 ### Example for popcorn-hello migration from ARM to x86
 
-In docker, the program workdir is set to /app
+In docker, the program workdir is set to /app **This is important for popcorn-notify**
 ```bash
+cp helloworld/popcorn-hello_aarch64 helloworld/popcorn-hello
+
 cp -r helloworld /app #may need sudo
 ```
-Build a docker image. Use myhello as the image name. **(DO NOT FORGET THE DOT AFTER IMAGE NAME)**
-```bash	
-cd helloworld	
-cp popcorn-hello_aarch64 popcorn-hello #if you are running on ARM
-cp popcorn-hello_x86-64 popcorn-hello #if you are running on x86
-docker build -t myhello . 
-```
-Create a docker container for the myhello image, the Docker Container ID will return on standard output
-```bash	
-docker container create myhello 
-```
-
-Enter docker container directory
+Pull the Popcorn helloworld image from Docker hub
 ```bash
-cd /var/lib/docker/containers/<Docker Container ID>
+docker pull 123toorc/hcontainer-helloworld:hcontainer
 ```
 
-Enter the container's configuration file
+Run docker image, the Docker Container ID will return on standard output, ARM need add capabilities
+```bash	
+docker run --cap-add all -d 083c6d4dfcb3  
+```
+**(SKIP)If migration is from x86 to ARM, either run with "cap-add all" and stop container then restore the container, or create a container and change the capabilities in hostconfig.json file**
 ```bash	
 vim hostconfig.json
-```	
-Change the Capability option to add all capabilities. Otherwise, popcorn(latest version compiler) aarch64 binary will not run inside docker.
-Replace ```"CapAdd":null ``` with ```"CapAdd":["all"] ``` in hostconfig.json
+#Change the Capability option to add all capabilities. Otherwise, popcorn(latest version compiler) aarch64 binary will not run inside docker.
 
-Restart docker to store/use configration changes
-```bash
+#Replace "CapAdd":null with "CapAdd":["all"] in hostconfig.json
+
+#Restart docker to store/use configration changes
+
 service docker restart
 ```
 
-Start the container:
+Start the container (if using docker run --cap-add all -d %IMAGE_ID, please ignore this step, because the Container is running as detached):
 ```bash	
 docker container start <Docker Container ID>
 ```
+
 See if the popcorn-hello process is running inside the container:
 ```bash
 sudo docker top <containerID> -a|grep popcorn-hello
@@ -220,17 +215,12 @@ Send recode checkpoint images to target machine
 ssh $target@x86_machine
 ```
 Login to target machine 
-In target machine still need a same container
+In target machine still need a same container **Noticed: if migration is from x86->ARM, after create a Container, user must go to the container dir to change the hostconfig.json to add capabilites. Or instead of create a container, just do '$docker run --cap-add all -d 0beb2a3a9474' then stop the container before restore.**
+
 ```bash	
-cd helloworld
+docker pull 123toorc/hcontainer-helloworld:hcontainer
 
-cp popcorn-hello_x86-64 popcorn-hello
-
-cp -r ../helloworld /app
-
-docker build -t myhello .
-
-docker container create myhello
+docker container create 0beb2a3a9474
 
  	7637bbed740829f374c7ff365b171f387206acccb1b604af3b87ab537bbc44d2
 ```
@@ -258,9 +248,9 @@ cp redis-server_x86-64 redis-server
 
 cp -r ../popcorn-redis /app
 
-docker build -t myredis .
+docker pull 123toorc/hcontainer-redis:hcontainer
 
-docker run --cap-add all -d -p 6379:6379 myredis
+docker run --cap-add all -d -p 6379:6379 155fea01651c
 
         4927a9ad4109ce5561f8ad346372fa11084c1fb586f0022c44d70a1d4fd048f2
 ```
@@ -299,12 +289,15 @@ cp redis-server_aarch64 redis-server
 
 cp -r ../popcorn-redis /app
 
-docker build -t myredis .
+docker pull 123toorc/hcontainer-redis:hcontainer
 
-# Instead, you also can do it in hostconfig file to add capabilities and config.v2.json to add port mapping, please have look of scripts/builder.sh
-docker run --cap-add all -d -p 6379:6379 myredis
+# Instead, you also can use '$docker container create 0f548727d566' and alter in hostconfig file to add capabilities and config.v2.json to add port mapping, please have look of scripts/builder.sh
+
+docker run --cap-add all -d -p 6379:6379 0f548727d566
 
 	10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394
+
+# Stop the running container then we restore it.
 
 docker container stop 10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394
 
