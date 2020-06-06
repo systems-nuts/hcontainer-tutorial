@@ -164,15 +164,15 @@ Run docker image, the Docker Container ID will return on standard output, ARM ne
 ```bash	
 docker run --cap-add all -d 083c6d4dfcb3  
 ```
-**If migration is from x86 to ARM, either run with "cap-add all" and stop container then restore the container, or create a container and change the capabilities in hostconfig.json file**
+**(SKIP)If migration is from x86 to ARM, either run with "cap-add all" and stop container then restore the container, or create a container and change the capabilities in hostconfig.json file**
 ```bash	
 vim hostconfig.json
-```	
-Change the Capability option to add all capabilities. Otherwise, popcorn(latest version compiler) aarch64 binary will not run inside docker.
-Replace ```"CapAdd":null ``` with ```"CapAdd":["all"] ``` in hostconfig.json
+#Change the Capability option to add all capabilities. Otherwise, popcorn(latest version compiler) aarch64 binary will not run inside docker.
 
-Restart docker to store/use configration changes
-```bash
+#Replace "CapAdd":null with "CapAdd":["all"] in hostconfig.json
+
+#Restart docker to store/use configration changes
+
 service docker restart
 ```
 
