@@ -27,10 +27,10 @@ sudo add-apt-repository \
    		    $(lsb_release -cs) \
    		    stable"
 #ARM
-	    sudo add-apt-repository \
-            "deb [arch=arm64] https://download.docker.com/linux/ubuntu \
-   	    $(lsb_release -cs) \
-   	    stable"
+sudo add-apt-repository \
+            	    "deb [arch=arm64] https://download.docker.com/linux/ubuntu \
+   	   	    $(lsb_release -cs) \
+   	            stable"
 	    
 	    
  sudo apt-get update
