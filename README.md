@@ -33,8 +33,8 @@ sudo add-apt-repository \
    	            stable"
 	    
 	    
- sudo apt-get update
- sudo apt-get install docker-ce=5:18.09.6~3-0~ubuntu-bionic docker-ce-cli=5:18.09.6~3-0~ubuntu-bionic containerd.io -y
+sudo apt-get update
+sudo apt-get install docker-ce=5:18.09.6~3-0~ubuntu-bionic docker-ce-cli=5:18.09.6~3-0~ubuntu-bionic containerd.io -y
 ```
 
 5. Verify Docker is installed correctly by running the hello-world image. (Offical instruction from Docker).
