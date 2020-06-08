@@ -4,7 +4,7 @@ This guide targets a H-Containers deployment on Amazon AWS, or any pair machine 
 
 ## Prerequisites
 
-1. Recommended Systems/AMIs: Linux 4.15.0-1043-aws #45-Ubuntu **x86_64** and **aarch64**  **Note: For Ubuntu 20.04 user, the pre-requites packege of CRIU-HET is different, please following this** [wiki](https://github.com/systems-nuts/criu-het/wiki/CRIUHET-Installation) 
+1. Recommended Systems/AMIs: Linux 4.15.0-1043-aws #45-Ubuntu 18.04 LTS **x86_64** and **aarch64**  **Note: For Ubuntu 20.04 LTS user, the pre-requites packege of CRIU-HET is different, please following this** [wiki](https://github.com/systems-nuts/criu-het/wiki/CRIUHET-Installation) 
 
 2. Inorder to migrate in AWS machines, both of your machines need to have ssh-keygen setup. Since it is impossible to login to your AWS machine without public key. AWS will give you a public key, but in order to run the script successfully, higtly recomand user to set up ssh-keygen in your machines.
 ```bash
@@ -75,8 +75,7 @@ service docker restart
 		
 	iv: Make CRIU (Please also see the README file inside the criu repository):
 	```bash
-	cd criu # (if not already there)
-	make clean
+	cd criu-het # (if not already there)
 	make
 	make install
 	```
@@ -98,10 +97,11 @@ service docker restart
 	Please read the README file inside container-nginx repository to compile and install it
 	```
 
-## Contents (of hcontainer-docker script migration) 
+## Contents (of hcontainer-tutorial script migration) 
 ```
 config.sh 					 				
 popcorn.sh
+docker-popcorn-notify.sh
 scripts/
 	- builder.sh
 	- check.sh
@@ -130,25 +130,6 @@ live-migration/ # criu live migration test script
 non-docker-migration/ # H-container normal migration script 
 
 ```
-## Example of using scripts
-
-We provide scripts that can help you to do migration easily. **Nginx is not support by script**
-The scripts intros:
-1. check.sh will help user check current Cgroup support
-2. builder.sh is helper to build H-container
-3. dump.sh can help you dump the container and recode image, generate the dumped images in current dir, with Container ID and executable file given 
-4. recode.sh is for process dumped images and recode it **this is needed also for manually Docker migrate**
-5. restore.sh is for restore Hcontainer in remote machine
-
-**popcorn.sh** will call these scripts separately.  <br>
-popcorn.sh takes **2 <required arguments\>** and **[2 optional arguments]**  <br>
-**\<container directory\> \<target machine\> \[-p\] \[port:port\]** <br>
-There is more detail if you do **./popcorn.sh -h**  <br>
-This is a simple try of helloworld and redis:
-```bash
-./popcorn.sh ./helloworld x86_machine@10.10.10.10 
-./popcorn.sh ./popcorn-redis arm_machine@10.10.10.10 -p 6379:6379 
-```
 
 ## Example by your self
 
@@ -159,12 +140,6 @@ We provide examples step by step to explain different senarios, from x86 to ARM 
 
 ### Example for popcorn-hello migration from ARM to x86
 
-In docker, the program workdir is set to /app **This is important for popcorn-notify**
-```bash
-cp helloworld/popcorn-hello_aarch64 helloworld/popcorn-hello
-
-cp -r helloworld /app #may need sudo
-```
 Pull the Popcorn helloworld image from Docker hub
 ```bash
 docker pull 123toorc/hcontainer-helloworld:hcontainer
@@ -191,40 +166,36 @@ Start the container (if using docker run --cap-add all -d %IMAGE_ID, please igno
 docker container start <Docker Container ID>
 ```
 
-See if the popcorn-hello process is running inside the container:
+Notify the process, docker-popcorn-notify takes 2 arguments, the Container ID(long or short), target archtecture.
+
 ```bash
-sudo docker top <containerID> -a|grep popcorn-hello
-```
-Example output:
-```bash
-17663 ? 00:00:00 popcorn-hello
+cd hcontainer-tutorial
+./docker-popcorn-notify a40a7eb069172dc x86-64
 ```
 
-Notify the process (**IF /app DIRECTORY IS NOT COPIED, NOTIFY WILL FAIL**)
-```bash
-popcorn-notify 4573 x86-64
-```
+After notify succeeded, use docker checkpoint create to create a checkpoint, name is last arg (we name it as simple in this example)
 
-After notify succeeded, this command will create a checkpoint, name is last args (IN ALL EXAMPLES IS simple)
 ```bash	
-docker checkpoint create a40a7eb069172dc64dc771128cce91e942656f1cfe8b4d11ac97a99b08f64fd9 simple
+docker checkpoint create a40a7eb069172dc simple
 ```
 Call recode script to recode the image file, it will copy the image file to current directory. 
+**recode.sh take 3 args, 1.Container Id (long or short)  2.Checkpoint name  3.Target archtecture**
+
 ```bash	
 cd scripts/
-./recode.sh a40a7eb069172dc64dc771128cce91e942656f1cfe8b4d11ac97a99b08f64fd9 simple x86-64
+./recode.sh a40a7eb069172dc simple x86-64
 ```
 
-**recode.sh take 3 args, 1.Container Id  2.Checkpoint name  3.Target archtecture**
 **recode.sh will take take the checkpoint, and the output directory will be generated in /tmp**
+Send recode checkpoint images to target machine
 ```bash	
 scp -r /tmp/simple $target@x86_machine:~
 ```
-Send recode checkpoint images to target machine
+Login to target machine 
+
 ```bash
 ssh $target@x86_machine
 ```
-Login to target machine 
 In target machine still need a same container **Noticed: if migration is from x86->ARM, after create a Container, user must go to the container dir to change the hostconfig.json to add capabilites. Or instead of create a container, just do '$docker run --cap-add all -d 0beb2a3a9474' then stop the container before restore.**
 
 ```bash	
@@ -234,30 +205,24 @@ docker container create 0beb2a3a9474
 
  	7637bbed740829f374c7ff365b171f387206acccb1b604af3b87ab537bbc44d2
 ```
+Copy the checkpoint images to target machine container checkpoints directory
 ```bash
 cp -r ~/simple /var/lib/docker/containers/7637bbed740829f374c7ff365b171f387206acccb1b604af3b87ab537bbc44d2/checkpoints
 ```
-Copy the checkpoint images to target machine container checkpoints directory
+Container restart from checkpoint 
 ```bash
 docker container start --checkpoint simple 7637bbed740829f374c7ff365b171f387206acccb1b604af3b87ab537bbc44d2
 ```
-Container restart from checkpoint 
+If it shows running, which means migration successfully, also you can check popcorn-hello output in log file located in the container directory
 ```bash
 docker ps
 ```
-If it shows running, which means migration successfully, also you can check popcorn-hello output in log file located in the container directory
 
 ### Example for redis migration from x86 to ARM
 
-In Dockerfile, CMD "--protected-mode", "no" will allow redis accept test data send from benchmark.
+Pull the h-container redis docker image from docker hub, then run the image detach as a container.
 
 ```bash
-cd popcorn-redis
-
-cp redis-server_x86-64 redis-server
-
-cp -r ../popcorn-redis /app
-
 docker pull 123toorc/hcontainer-redis:hcontainer
 
 docker run --cap-add all -d -p 6379:6379 155fea01651c
@@ -273,32 +238,26 @@ Directly run docker image to create a Container of redis.
 
 -d: Run in background, this args cause running image will create Container
 ```
+Notify the process
 ```bash
-docker ps
-
-ps -A | grep redis
-
-        7438 ?        00:00:00 redis-server
-
+cd hcontainer-tutorial
+./docker-popcorn-notify 4927a9ad4109c aarch64
 ```
-
+Checkpoint the Container on x86, create a checkpoint name as simple
 ```bash
-popcorn-notify 7438 aarch64
 
 docker checkpoint create 4927a9ad4109ce5561f8ad346372fa11084c1fb586f0022c44d70a1d4fd048f2 simple
-
-./scripts/recode.sh 4927a9ad4109ce5561f8ad346372fa11084c1fb586f0022c44d70a1d4fd048f2 simple aarch64
+```
+Recode checkpoint, and copy the recoded checkpoint to the ARM machine.
+```bash
+./scripts/recode.sh 4927a9ad4109c simple aarch64
 
 scp -r /tmp/simple $target@arm_machine:~
 
 ssh $target@arm_machine
-
-cd popcorn-redis
-
-cp redis-server_aarch64 redis-server
-
-cp -r ../popcorn-redis /app
-
+```
+On ARM machine, pull the hcontainer redis image and run it, then stop it and prepare for restore.
+```bash
 docker pull 123toorc/hcontainer-redis:hcontainer
 
 # Instead, you also can use '$docker container create 0f548727d566' and alter in hostconfig file to add capabilities and config.v2.json to add port mapping, please have look of scripts/builder.sh
@@ -310,7 +269,9 @@ docker run --cap-add all -d -p 6379:6379 0f548727d566
 # Stop the running container then we restore it.
 
 docker container stop 10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394
-
+```
+copy the recoded checkpoint transfer from the x86 machine to the container's checkpoints sub-directory and restore the container
+```bash
 cp -r /tmp/simple /var/liv/docker/containers/10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394/checkpoints
 
 docker container start --checkpoint simple 10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394
@@ -318,9 +279,30 @@ docker container start --checkpoint simple 10877d6d99969b4bdc0a4fc1dc144615cb1e0
 docker ps 
 ```
 
-You can also use redis-benchmark to test it
+You can also use redis-cli to test it, before the migration insert some key-value and try to get the key-value pair after restore. 
+
 ```bash
-./redis-benchmark -h 127.0.0.1 -p 6379
+redis-cli -h <IP> -p <Port>
+```
+
+## Example of using scripts 
+
+We provide scripts that can help you to do migration easily. **Nginx is not support by script**
+The scripts intros:
+1. check.sh will help user check current Cgroup support
+2. builder.sh is helper to build H-container
+3. dump.sh can help you dump the container and recode image, generate the dumped images in current dir, with Container ID and executable file given 
+4. recode.sh is for process dumped images and recode it **this is needed also for manually Docker migrate**
+5. restore.sh is for restore Hcontainer in remote machine
+
+**popcorn.sh** will call these scripts separately.  <br>
+popcorn.sh takes **2 <required arguments\>** and **[2 optional arguments]**  <br>
+**\<container directory\> \<target machine\> \[-p\] \[port:port\]** <br>
+There is more detail if you do **./popcorn.sh -h**  <br>
+This is a simple try of helloworld and redis:
+```bash
+./popcorn.sh ./helloworld x86_machine@10.10.10.10 
+./popcorn.sh ./popcorn-redis arm_machine@10.10.10.10 -p 6379:6379 
 ```
 
 ### Example for nginx migration from x86 to ARM
