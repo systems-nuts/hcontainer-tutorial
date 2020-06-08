@@ -232,7 +232,7 @@ docker pull 123toorc/hcontainer-redis:hcontainer
 
 docker run --cap-add all -d -p 6379:6379 155fea01651c
 
-        4927a9ad4109ce5561f8ad346372fa11084c1fb586f0022c44d70a1d4fd048f2
+->       4927a9ad4109ce5561f8ad346372fa11084c1fb586f0022c44d70a1d4fd048f2
 ```
 ```
 Directly run docker image to create a Container of redis.
@@ -269,7 +269,7 @@ docker pull 123toorc/hcontainer-redis:hcontainer
 
 docker run --cap-add all -d -p 6379:6379 0f548727d566
 
-	10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394
+->	10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394
 
 # Stop the running container then we restore it.
 
