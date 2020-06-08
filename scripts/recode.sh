@@ -5,7 +5,7 @@
 # It will generate a directroy contains all snapshot images in current pwd.
 #set -x
 set -e
-PID=$1
+CID=$1
 CHECKPOINT_NAME=$2
 TARGET=$3
 
@@ -36,12 +36,19 @@ then
     help
 fi
 
+IMAGE_ID=$(docker ps  -a --no-trunc | grep $CID |  awk '{print $2}' | sed -n '1p')
+PID=$(docker ps  -a --no-trunc | grep $CID |  awk '{print $1}')
+BIN_PATH=$(docker image inspect $IMAGE_ID | grep UpperDir)
+BIN_PATH=${BIN_PATH%\"*}
+BIN_PATH=${BIN_PATH#*\"*\"*\"}
+
+
 
 mkdir /var/lib/docker/containers/$PID/checkpoints/$CHECKPOINT_NAME/simple
 
 cp /var/lib/docker/containers/$PID/checkpoints/$CHECKPOINT_NAME/descriptors.json /var/lib/docker/containers/$PID/checkpoints/$CHECKPOINT_NAME/simple
 
-cd /var/lib/docker/containers/$PID/checkpoints/$CHECKPOINT_NAME/; crit recode -t $TARGET -o simple
+cd /var/lib/docker/containers/$PID/checkpoints/$CHECKPOINT_NAME/; crit recode -t $TARGET -o simple -r $BIN_PATH
 
 cd -
 
@@ -49,7 +56,7 @@ mv /var/lib/docker/containers/$PID/checkpoints/$CHECKPOINT_NAME/simple /tmp/$CHE
 
 for i in /tmp/$CHECKPOINT_NAME/core-*
 do
-	crit decode -i $i -o $i.dec
+	crit decode -i $i -o $i.dec 
 	sed -i 's#"seccomp_mode": "filter",# #' $i.dec
 	crit encode -i $i.dec -o $i
 	rm $i.dec
