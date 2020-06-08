@@ -148,6 +148,8 @@ docker pull 123toorc/hcontainer-helloworld:hcontainer
 Run docker image, the Docker Container ID will return on standard output, ARM need add capabilities
 ```bash	
 docker run --cap-add all -d 083c6d4dfcb3  
+
+->	a40a7eb069172dc64dc771128cce91e942656f1cfe8b4d11ac97a99b08f64fd9
 ```
 **(SKIP)If migration is from x86 to ARM, either run with "cap-add all" and stop container then restore the container, or create a container and change the capabilities in hostconfig.json file**
 ```bash	
@@ -161,7 +163,7 @@ vim hostconfig.json
 service docker restart
 ```
 
-Start the container (if using docker run --cap-add all -d %IMAGE_ID, please ignore this step, because the Container is running as detached):
+(SKIP)Start the container (if using docker run --cap-add all -d %IMAGE_ID, please ignore this step, because the Container is running as detached):
 ```bash	
 docker container start <Docker Container ID>
 ```
@@ -170,20 +172,20 @@ Notify the process, docker-popcorn-notify takes 2 arguments, the Container ID(lo
 
 ```bash
 cd hcontainer-tutorial
-./docker-popcorn-notify a40a7eb069172dc x86-64
+./docker-popcorn-notify a40a7eb069172d x86-64
 ```
 
 After notify succeeded, use docker checkpoint create to create a checkpoint, name is last arg (we name it as simple in this example)
 
 ```bash	
-docker checkpoint create a40a7eb069172dc simple
+docker checkpoint create a40a7eb069172d simple
 ```
 Call recode script to recode the image file, it will copy the image file to current directory. 
 **recode.sh take 3 args, 1.Container Id (long or short)  2.Checkpoint name  3.Target archtecture**
 
 ```bash	
 cd scripts/
-./recode.sh a40a7eb069172dc simple x86-64
+./recode.sh a40a7eb069172d simple x86-64
 ```
 
 **recode.sh will take take the checkpoint, and the output directory will be generated in /tmp**
@@ -201,17 +203,20 @@ In target machine still need a same container **Noticed: if migration is from x8
 ```bash	
 docker pull 123toorc/hcontainer-helloworld:hcontainer
 
-docker container create 0beb2a3a9474
+docker run --cap-add all 0beb2a3a9474
 
- 	7637bbed740829f374c7ff365b171f387206acccb1b604af3b87ab537bbc44d2
+ ->	7637bbed740829f374c7ff365b171f387206acccb1b604af3b87ab537bbc44d2
+
+docker container stop 7637bbed740829f374c7ff365b171f387206acccb1b604af3b87ab537bbc44d2
 ```
+
 Copy the checkpoint images to target machine container checkpoints directory
 ```bash
 cp -r ~/simple /var/lib/docker/containers/7637bbed740829f374c7ff365b171f387206acccb1b604af3b87ab537bbc44d2/checkpoints
 ```
 Container restart from checkpoint 
 ```bash
-docker container start --checkpoint simple 7637bbed740829f374c7ff365b171f387206acccb1b604af3b87ab537bbc44d2
+docker container start --checkpoint simple 7637bbed74082
 ```
 If it shows running, which means migration successfully, also you can check popcorn-hello output in log file located in the container directory
 ```bash
@@ -246,7 +251,7 @@ cd hcontainer-tutorial
 Checkpoint the Container on x86, create a checkpoint name as simple
 ```bash
 
-docker checkpoint create 4927a9ad4109ce5561f8ad346372fa11084c1fb586f0022c44d70a1d4fd048f2 simple
+docker checkpoint create 4927a9ad4109c simple
 ```
 Recode checkpoint, and copy the recoded checkpoint to the ARM machine.
 ```bash
@@ -274,7 +279,7 @@ copy the recoded checkpoint transfer from the x86 machine to the container's che
 ```bash
 cp -r /tmp/simple /var/liv/docker/containers/10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394/checkpoints
 
-docker container start --checkpoint simple 10877d6d99969b4bdc0a4fc1dc144615cb1e0d1bbbb727324adc7538f473b394
+docker container start --checkpoint simple 10877d6d99969
 
 docker ps 
 ```
