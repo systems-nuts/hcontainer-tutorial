@@ -54,7 +54,7 @@ EOF
     pip install ipaddress
     pip install pyfastcopy
     git clone https://github.com/systems-nuts/criu-het.git
-    cd criu && git checkout heterogeneous-simplified
+    cd criu-het && git checkout heterogeneous-simplified
     cpucore=sudo cat /proc/cpuinfo |grep "processor" |wc -l
     sudo make -j$cpucore
     sudo make install
