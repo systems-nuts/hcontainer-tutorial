@@ -320,13 +320,13 @@ Because in Container, nginx is process 1, docker will exit when nginx initilazat
 In order to keep container running, it needs args '-g daemon off;' to force it hang on.	
 ```
 ```bash
-cp -r nginx /usr/local 
+cp -r nginx_config /usr/local 
 	
-cd test_nginx
+cd nginx
 
 cp popcorn-nginx_x86-64 popcorn-nginx
 
-cp -r ../test_nginx /app	
+cp -r ../nginx_bin /app	
 
 docker build -t mynginx .
 
