@@ -1,3 +1,4 @@
+[More information can be found on the Wiki](https://github.com/systems-nuts/criu-het/wiki)
 # Docker Migration
 
 This guide targets a H-Containers deployment on Amazon AWS, or any pair machine with identical kernel Cgroup configuration. A future guide will address other deployments.
@@ -113,12 +114,12 @@ helloworld/
 	- popcorn-hello 			
 	- popcorn-hello_aarch64		
 	- popcorn-hello_x86-64	
-popcorn-redis/
+redis/
 	- Dockerfile
 	- redis-server
 	- redis-server_aarch64
 	- redis-server_x86-64
-test-nginx/
+nginx-bin/
 	- Dockerfile
 	- popcorn-nginx
 	- popcorn-nginx_aarch64
