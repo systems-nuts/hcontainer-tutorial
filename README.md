@@ -1,8 +1,12 @@
 [More information can be found on the Wiki](https://github.com/systems-nuts/hcontainer-tutorial/wiki)
 
+<p align="center"><img src="http://www.popcornlinux.org/images/images/hcont_logo.png" width="256px"/></p>
+
+### H-Container -- A project to migrate containers among heterogeneous-ISA computers (using Docker)
+
 # Docker Migration
 
-Popcorn Linux [Demo](https://www.youtube.com/watch?v=Gj9L169hg50) on Youtube
+
 
 This guide targets a H-Containers deployment on Amazon AWS, or any pair machine with identical kernel Cgroup configuration. A future guide will address other deployments. 
 
@@ -86,3 +90,7 @@ This is a simple try of helloworld and redis:
 ./popcorn.sh ./helloworld x86_machine@10.10.10.10 
 ./popcorn.sh ./popcorn-redis arm_machine@10.10.10.10 -p 6379:6379 
 ```
+
+## More
+
+Popcorn Linux [Demo](https://www.youtube.com/watch?v=Gj9L169hg50) on Youtube
