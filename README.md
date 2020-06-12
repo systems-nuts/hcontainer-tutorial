@@ -2,9 +2,10 @@
 
 <p align="center"><img src="http://www.popcornlinux.org/images/images/hcont_logo.png" width="200px"/></p>
 
-## H-Container -- A project to migrate containers among heterogeneous-ISA machines (using Docker)
+## H-Container -- A project to migrate containers among heterogeneous-ISA machines
 
-H-Container allows to take a natively compiled binary (for Linux) and transform it into natively compiled binary for mulitple heterogeneous-ISA machines -- i.e., the binary will be able to migrate at runtime among Linux boxes running for example on ARM and x86. **ADD the idea of CONTAINERS**
+H-Container enables containerized applications, natively compiled for a specific ISA, to runtime migrate (similar to VM migration) across compute nodes featuring CPUs of different ISAs, such as ARM and x86. 
+H-Container takes a natively compiled binary (for Linux) and transforms it into a natively compiled set of binaries, one per ISA. Once a binary is started and checkpointed on a machine, it can be restarted on a machine with a different ISA. Thus, enabling runtime migration of applications (note that live-migration is also supported). H-Container supports not just single applications but also entire containers.
 
 H-Container fully integrates with [Docker](www.docker.com). However, at least at the time of writing, Docker supports container checkpoint/restart (with CRIU) on a single machine only, checkpoint/restart among different (heterogeneous-ISA) machines is completely manual. This repository provides the tools and instructions to enable Docker container migration.
 
@@ -46,15 +47,16 @@ non-docker-migration/ # H-container normal migration script
 ```
 
 
+
 # Docker Migration
 
-This guide targets a H-Containers deployment on Amazon AWS, or any pair machine with identical kernel Cgroup configuration. A future guide will address other deployments. 
+This guide targets a H-Containers deployment on Amazon AWS, or any pair machine with identical kernel Cgroup configuration. 
 
 ## Prerequisites
 
 1. Recommended Systems/AMIs: Linux 4.15.0-1043-aws #45-Ubuntu 18.04 LTS **x86_64** and **aarch64**  **Note: For Ubuntu 20.04 LTS user, the pre-requites packege of CRIU-HET is different, please following this** [wiki](https://github.com/systems-nuts/criu-het/wiki/CRIUHET-Installation) 
 
-2. Inorder to migrate in AWS machines, both of your machines need to have ssh-keygen setup. Since it is impossible to login to your AWS machine without public key. AWS will give you a public key, but in order to run the script successfully, higtly recomand user to set up ssh-keygen in your machines.
+2. In order to migrate in AWS machines, both of your machines need to have ssh-keygen setup. Since it is impossible to login to your AWS machine without public key. AWS will give you a public key, but in order to run the script successfully, higtly recomand user to set up ssh-keygen in your machines.
 ```bash
 $ssh-keygen # keep default storage place, just keep click 'return' until done.  
 #copy the content of ~/.ssh/id_rsa.pub to another machine ～/.ssh/authorizedi_keys
