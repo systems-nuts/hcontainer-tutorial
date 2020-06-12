@@ -1,33 +1,17 @@
-[More information can be found on the Wiki](https://github.com/systems-nuts/hcontainer-tutorial/wiki)
+[More information can be found on the Wiki](../../wiki)
 
-<p align="center"><img src="http://www.popcornlinux.org/images/images/hcont_logo.png" width="256px"/></p>
+<p align="center"><img src="http://www.popcornlinux.org/images/images/hcont_logo.png" width="200px"/></p>
 
-### H-Container -- A project to migrate containers among heterogeneous-ISA computers (using Docker)
+## H-Container -- A project to migrate containers among heterogeneous-ISA machines (using Docker)
 
-# Docker Migration
+H-Container allows to take a natively compiled binary (for Linux) and transform it into natively compiled binary for mulitple heterogeneous-ISA machines -- i.e., the binary will be able to migrate at runtime among Linux boxes running for example on ARM and x86. **ADD the idea of CONTAINERS**
 
+H-Container fully integrates with [Docker](www.docker.com). However, at least at the time of writing, Docker supports container checkpoint/restart (with CRIU) on a single machine only, checkpoint/restart among different (heterogeneous-ISA) machines is completely manual. This repository provides the tools and instructions to enable Docker container migration.
 
+## Content
 
-This guide targets a H-Containers deployment on Amazon AWS, or any pair machine with identical kernel Cgroup configuration. A future guide will address other deployments. 
+This repository includes tools and instructions (refer to the [Wiki](../../wiki)) to experience H-Container container migration with and without Docker, on yuor own machine (embedded board, laptop, desktop, server), as well as in the cloud (AWS). The following content is included:
 
-## Prerequisites
-
-1. Recommended Systems/AMIs: Linux 4.15.0-1043-aws #45-Ubuntu 18.04 LTS **x86_64** and **aarch64**  **Note: For Ubuntu 20.04 LTS user, the pre-requites packege of CRIU-HET is different, please following this** [wiki](https://github.com/systems-nuts/criu-het/wiki/CRIUHET-Installation) 
-
-2. Inorder to migrate in AWS machines, both of your machines need to have ssh-keygen setup. Since it is impossible to login to your AWS machine without public key. AWS will give you a public key, but in order to run the script successfully, higtly recomand user to set up ssh-keygen in your machines.
-```bash
-$ssh-keygen # keep default storage place, just keep click 'return' until done.  
-#copy the content of ~/.ssh/id_rsa.pub to another machine ～/.ssh/authorizedi_keys
-```
-
-3. **The config.sh script will help you to do all following set-ups, with -i flag, it will compile and install criu.**
-```bash
-$ ./config.sh 
-or
-$ ./config.sh -i 
-``` 
-
-## Contents (of hcontainer-tutorial script migration) 
 ```
 config.sh 					 				
 popcorn.sh
@@ -60,6 +44,30 @@ live-migration/ # criu live migration test script
 non-docker-migration/ # H-container normal migration script 
 
 ```
+
+
+# Docker Migration
+
+This guide targets a H-Containers deployment on Amazon AWS, or any pair machine with identical kernel Cgroup configuration. A future guide will address other deployments. 
+
+## Prerequisites
+
+1. Recommended Systems/AMIs: Linux 4.15.0-1043-aws #45-Ubuntu 18.04 LTS **x86_64** and **aarch64**  **Note: For Ubuntu 20.04 LTS user, the pre-requites packege of CRIU-HET is different, please following this** [wiki](https://github.com/systems-nuts/criu-het/wiki/CRIUHET-Installation) 
+
+2. Inorder to migrate in AWS machines, both of your machines need to have ssh-keygen setup. Since it is impossible to login to your AWS machine without public key. AWS will give you a public key, but in order to run the script successfully, higtly recomand user to set up ssh-keygen in your machines.
+```bash
+$ssh-keygen # keep default storage place, just keep click 'return' until done.  
+#copy the content of ~/.ssh/id_rsa.pub to another machine ～/.ssh/authorizedi_keys
+```
+
+3. **The config.sh script will help you to do all following set-ups, with -i flag, it will compile and install criu.**
+```bash
+$ ./config.sh 
+or
+$ ./config.sh -i 
+``` 
+
+
 
 ## Example by your self
 
